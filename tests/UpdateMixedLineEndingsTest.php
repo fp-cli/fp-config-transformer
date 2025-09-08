@@ -1,6 +1,6 @@
 <?php
 
-use WP_CLI\Tests\TestCase;
+use FP_CLI\Tests\TestCase;
 
 class UpdateMixedLineEndingsTest extends TestCase {
 	private static $test_config_path;
@@ -26,9 +26,9 @@ class UpdateMixedLineEndingsTest extends TestCase {
 			"\r",
 			"\r",
 		);
-		self::$test_config_path  = tempnam( sys_get_temp_dir(), 'wp-config' );
+		self::$test_config_path  = tempnam( sys_get_temp_dir(), 'fp-config' );
 		file_put_contents( self::$test_config_path, implode( '', self::$test_config_lines ) );
-		self::$config_transformer = new WPConfigTransformer( self::$test_config_path );
+		self::$config_transformer = new FPConfigTransformer( self::$test_config_path );
 	}
 	public static function tear_down_after_class() {
 		unlink( self::$test_config_path );

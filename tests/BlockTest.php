@@ -1,6 +1,6 @@
 <?php
 
-use WP_CLI\Tests\TestCase;
+use FP_CLI\Tests\TestCase;
 
 class BlockTest extends TestCase {
 
@@ -58,9 +58,9 @@ class BlockTest extends TestCase {
 			}
 		}
 
-		self::$test_config_path = __DIR__ . '/wp-config-test-block.php';
+		self::$test_config_path = __DIR__ . '/fp-config-test-block.php';
 		file_put_contents( self::$test_config_path, $contents );
-		self::$config_transformer = new WPConfigTransformer( self::$test_config_path );
+		self::$config_transformer = new FPConfigTransformer( self::$test_config_path );
 	}
 
 	public static function tear_down_after_class() {

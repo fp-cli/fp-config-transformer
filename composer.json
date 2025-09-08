@@ -1,7 +1,7 @@
 {
-    "name": "wp-cli/wp-config-transformer",
-    "description": "Programmatically edit a wp-config.php file.",
-    "homepage": "https://github.com/wp-cli/wp-config-transformer",
+    "name": "fp-cli/fp-config-transformer",
+    "description": "Programmatically edit a fp-config.php file.",
+    "homepage": "https://github.com/fp-cli/fp-config-transformer",
     "type": "library",
     "license": "MIT",
     "authors": [
@@ -16,7 +16,7 @@
         "sort-packages": true,
         "allow-plugins": {
             "dealerdirect/phpcodesniffer-composer-installer": true,
-            "johnpbloch/wordpress-core-installer": true,
+            "johnpbloch/finpress-core-installer": true,
             "phpstan/extension-installer": true
         }
     },
@@ -24,10 +24,10 @@
         "php": ">=7.2.24"
     },
     "require-dev": {
-        "wp-cli/wp-cli-tests": "^4.0 || ^5.0"
+        "fp-cli/fp-cli-tests": "^4.0 || ^5.0"
     },
     "autoload": {
-        "files": [ "src/WPConfigTransformer.php" ]
+        "files": [ "src/FPConfigTransformer.php" ]
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
@@ -54,6 +54,6 @@
         }
     },
     "support": {
-        "issues": "https://github.com/wp-cli/wp-config-transformer/issues"
+        "issues": "https://github.com/fp-cli/fp-config-transformer/issues"
     }
 }

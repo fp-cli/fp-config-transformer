@@ -1,6 +1,6 @@
 <?php
 
-use WP_CLI\Tests\TestCase;
+use FP_CLI\Tests\TestCase;
 
 class AddRemoveTest extends TestCase {
 
@@ -17,9 +17,9 @@ class AddRemoveTest extends TestCase {
 			self::$raw_data = array_merge( self::$raw_data, explode( PHP_EOL, file_get_contents( __DIR__ . '/fixtures/raw-data-extra.txt' ) ) );
 		}
 
-		self::$test_config_path = __DIR__ . '/wp-config-test-add.php';
-		copy( __DIR__ . '/fixtures/wp-config-example.php', self::$test_config_path );
-		self::$config_transformer = new WPConfigTransformer( self::$test_config_path );
+		self::$test_config_path = __DIR__ . '/fp-config-test-add.php';
+		copy( __DIR__ . '/fixtures/fp-config-example.php', self::$test_config_path );
+		self::$config_transformer = new FPConfigTransformer( self::$test_config_path );
 	}
 
 	public static function tear_down_after_class() {

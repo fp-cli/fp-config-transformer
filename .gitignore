@@ -1,6 +1,6 @@
 .DS_Store
 
-/tests/wp-config-test*.php
+/tests/fp-config-test*.php
 /vendor/
 composer.lock
 .phpunit.result.cache

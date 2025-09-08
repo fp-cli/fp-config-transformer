@@ -1,6 +1,6 @@
 <?php
 
-use WP_CLI\Tests\TestCase;
+use FP_CLI\Tests\TestCase;
 
 class MultilineTest extends TestCase {
 
@@ -8,8 +8,8 @@ class MultilineTest extends TestCase {
 	protected static $config_transformer;
 
 	public static function set_up_before_class() {
-		self::$test_config_path = __DIR__ . '/wp-config-test-multiline.php';
-		/* The // at the end of the first line causes parse_wp_config to
+		self::$test_config_path = __DIR__ . '/fp-config-test-multiline.php';
+		/* The // at the end of the first line causes parse_fp_config to
 		 * have a space prefixing the second line, which causes the preg_replace
 		 * in update to fail.
 		 * Fixed in ad435a7
@@ -22,7 +22,7 @@ define('FIRST_CONSTANT', true); //
 define('SECOND_CONSTANT', 'oldvalue');
 EOF
 		);
-		self::$config_transformer = new WPConfigTransformer( self::$test_config_path );
+		self::$config_transformer = new FPConfigTransformer( self::$test_config_path );
 	}
 
 

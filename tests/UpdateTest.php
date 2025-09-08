@@ -1,6 +1,6 @@
 <?php
 
-use WP_CLI\Tests\TestCase;
+use FP_CLI\Tests\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class UpdateTest extends TestCase {
@@ -18,9 +18,9 @@ class UpdateTest extends TestCase {
 			self::$raw_data = array_merge( self::$raw_data, explode( PHP_EOL, file_get_contents( __DIR__ . '/fixtures/raw-data-extra.txt' ) ) );
 		}
 
-		self::$test_config_path = __DIR__ . '/wp-config-test-update.php';
+		self::$test_config_path = __DIR__ . '/fp-config-test-update.php';
 		file_put_contents( self::$test_config_path, '<?php' . PHP_EOL . PHP_EOL );
-		self::$config_transformer = new WPConfigTransformer( self::$test_config_path );
+		self::$config_transformer = new FPConfigTransformer( self::$test_config_path );
 	}
 
 	public static function tear_down_after_class() {
@@ -413,7 +413,7 @@ class UpdateTest extends TestCase {
 
 	public function testAddConstantWithoutAnchor() {
 		$name = 'TEST_CONST_ADD_EXISTS_NO_ANCHOR';
-		$this->assertTrue( self::$config_transformer->add( 'constant', $name, 'foo', array( 'anchor' => WPConfigTransformer::ANCHOR_EOF ), $name ) );
+		$this->assertTrue( self::$config_transformer->add( 'constant', $name, 'foo', array( 'anchor' => FPConfigTransformer::ANCHOR_EOF ), $name ) );
 		$this->assertTrue( self::$config_transformer->exists( 'constant', $name ), $name );
 		$this->assertFalse( self::$config_transformer->add( 'constant', $name, 'bar' ), $name );
 

@@ -9,7 +9,7 @@
 		 beStrictAboutTodoAnnotatedTests="true"
 		 colors="true"
 		 verbose="true">
-	<testsuite name="wp-cli/wp-config-transformer tests">
+	<testsuite name="fp-cli/fp-config-transformer tests">
 		<directory suffix="Test.php">tests</directory>
 	</testsuite>
 

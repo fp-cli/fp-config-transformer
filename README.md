@@ -1,8 +1,8 @@
-# WP Config Transformer
+# FP Config Transformer
 
-Programmatically edit a `wp-config.php` file.
+Programmatically edit a `fp-config.php` file.
 
-[![Testing](https://github.com/wp-cli/wp-config-transformer/actions/workflows/testing.yml/badge.svg)](https://github.com/wp-cli/wp-config-transformer/actions/workflows/testing.yml)
+[![Testing](https://github.com/fp-cli/fp-config-transformer/actions/workflows/testing.yml/badge.svg)](https://github.com/fp-cli/fp-config-transformer/actions/workflows/testing.yml)
 
 Quick links: [Using](#using) &#124; [Options](#options) &#124; [How it works](#how-it-works) &#124; [Testing](#testing)
 
@@ -11,13 +11,13 @@ Quick links: [Using](#using) &#124; [Options](#options) &#124; [How it works](#h
 ### Instantiate
 
 ```php
-$config_transformer = new WPConfigTransformer( '/path/to/wp-config.php' );
+$config_transformer = new FPConfigTransformer( '/path/to/fp-config.php' );
 ```
 
 ### Edit constants
 
 ```php
-$config_transformer->update( 'constant', 'WP_DEBUG', 'true', array( 'raw' => true ) );
+$config_transformer->update( 'constant', 'FP_DEBUG', 'true', array( 'raw' => true ) );
 $config_transformer->add( 'constant', 'MY_SPECIAL_CONFIG', 'foo' );
 $config_transformer->remove( 'constant', 'MY_SPECIAL_CONFIG' );
 ```
@@ -25,7 +25,7 @@ $config_transformer->remove( 'constant', 'MY_SPECIAL_CONFIG' );
 ### Edit variables
 
 ```php
-$config_transformer->update( 'variable', 'table_prefix', 'wp_custom_' );
+$config_transformer->update( 'variable', 'table_prefix', 'fp_custom_' );
 $config_transformer->add( 'variable', 'my_special_global', 'foo' );
 $config_transformer->remove( 'variable', 'my_special_global' );
 ```
@@ -48,12 +48,12 @@ Special behaviors when adding or updating configs are available using the option
 
 ### Normalization
 
-In contrast to the "edit in place" strategy above, there is the option to normalize the output during a config update and effectively replace the existing syntax with output that adheres to WP Coding Standards.
+In contrast to the "edit in place" strategy above, there is the option to normalize the output during a config update and effectively replace the existing syntax with output that adheres to FP Coding Standards.
 
 Let's reconsider a poorly-formatted example:
 
 ```php
-                 define   (    'WP_DEBUG'   ,
+                 define   (    'FP_DEBUG'   ,
     false, false     )
 ;
 ```
@@ -61,13 +61,13 @@ Let's reconsider a poorly-formatted example:
 This time running:
 
 ```php
-$config_transformer->update( 'constant', 'WP_DEBUG', 'true', array( 'raw' => true, 'normalize' => true ) );
+$config_transformer->update( 'constant', 'FP_DEBUG', 'true', array( 'raw' => true, 'normalize' => true ) );
 ```
 
 Now we will get an output of:
 
 ```php
-define( 'WP_DEBUG', true );
+define( 'FP_DEBUG', true );
 ```
 
 Nice!
@@ -87,7 +87,7 @@ The `raw` option means that instead of placing the value inside the config as a 
 The anchor string is the piece of text that additions will be anchored to.
 
 ```php
-$config_transformer->update( 'constant', 'FOO', 'bar', array( 'anchor' => '/** Absolute path to the WordPress directory' ) ); // Default
+$config_transformer->update( 'constant', 'FOO', 'bar', array( 'anchor' => '/** Absolute path to the FinPress directory' ) ); // Default
 ```
 
 ### Anchor placement
@@ -134,7 +134,7 @@ Variables: https://regex101.com/r/cSLZZz/4
 
 ### Editing in place
 
-Due to the unsemantic nature of the `wp-config.php` file, and PHP's loose syntax in general, the WP Config Transformer takes an "edit in place" strategy in order to preserve the original formatting and whatever other obscurities may be taking place in the block. After all, we only care about transforming values, not constant or variable names.
+Due to the unsemantic nature of the `fp-config.php` file, and PHP's loose syntax in general, the FP Config Transformer takes an "edit in place" strategy in order to preserve the original formatting and whatever other obscurities may be taking place in the block. After all, we only care about transforming values, not constant or variable names.
 
 To achieve this, the following steps are performed:
 
@@ -146,7 +146,7 @@ To achieve this, the following steps are performed:
 Consider the following horrifically-valid PHP block, that also happens to be using the optional (and rare) 3rd argument for constant case-sensitivity:
 
 ```php
-                 define   (    'WP_DEBUG'   ,
+                 define   (    'FP_DEBUG'   ,
     false, false     )
 ;
 ```
@@ -154,13 +154,13 @@ Consider the following horrifically-valid PHP block, that also happens to be usi
 The "edit in place" strategy means that running:
 
 ```php
-$config_transformer->update( 'constant', 'WP_DEBUG', 'true', array( 'raw' => true ) );
+$config_transformer->update( 'constant', 'FP_DEBUG', 'true', array( 'raw' => true ) );
 ```
 
 Will give us a result that safely changes _only_ the value, leaving the formatting and additional argument(s) unscathed:
 
 ```php
-                 define   (    'WP_DEBUG'   ,
+                 define   (    'FP_DEBUG'   ,
     true, false     )
 ;
 ```
@@ -193,33 +193,33 @@ Of course the exception to this is if you are using the `add => false` option, i
 
 **CORRECT**
 ```php
-define( 'WP_DEBUG', true );
-define( 'WP_SCRIPT_DEBUG', true );
-$table_prefix = 'wp_';
+define( 'FP_DEBUG', true );
+define( 'FP_SCRIPT_DEBUG', true );
+$table_prefix = 'fp_';
 $my_var = 'foo';
 ```
 
 **INCORRECT**
 ```php
-define( 'WP_DEBUG', true ); define( 'WP_SCRIPT_DEBUG', true );
-$table_prefix = 'wp_'; $my_var = 'foo';
+define( 'FP_DEBUG', true ); define( 'FP_SCRIPT_DEBUG', true );
+$table_prefix = 'fp_'; $my_var = 'foo';
 ```
 
 2. If the third argument in `define()` is used, it _must_ be a boolean.
 
 **CORRECT**
 ```php
-define( 'WP_DEBUG', true, false );
-define( 'WP_DEBUG', true, FALSE );
+define( 'FP_DEBUG', true, false );
+define( 'FP_DEBUG', true, FALSE );
 define( 'foo', true, true );
 define( 'foo', true, TRUE );
 ```
 
 **INCORRECT**
 ```php
-define( 'WP_DEBUG', true, 0 );
-define( 'WP_DEBUG', true, 'yes' );
-define( 'WP_DEBUG', true, 'this comma, will break everything' );
+define( 'FP_DEBUG', true, 0 );
+define( 'FP_DEBUG', true, 'yes' );
+define( 'FP_DEBUG', true, 'this comma, will break everything' );
 ```
 
 ## Testing

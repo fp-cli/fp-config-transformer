@@ -1,61 +1,61 @@
 <?php
 
 /**
- * Transforms a wp-config.php file.
+ * Transforms a fp-config.php file.
  */
-class WPConfigTransformer {
+class FPConfigTransformer {
 	/**
 	 * Append to end of file
 	 */
 	const ANCHOR_EOF = 'EOF';
 
 	/**
-	 * Path to the wp-config.php file.
+	 * Path to the fp-config.php file.
 	 *
 	 * @var string
 	 */
-	protected $wp_config_path;
+	protected $fp_config_path;
 
 	/**
-	 * Original source of the wp-config.php file.
+	 * Original source of the fp-config.php file.
 	 *
 	 * @var string
 	 */
-	protected $wp_config_src;
+	protected $fp_config_src;
 
 	/**
 	 * Array of parsed configs.
 	 *
 	 * @var array<string, array<string, array{src: string, value: string, parts: array<string>}>>
 	 */
-	protected $wp_configs = array();
+	protected $fp_configs = array();
 
 	/**
-	 * Instantiates the class with a valid wp-config.php.
+	 * Instantiates the class with a valid fp-config.php.
 	 *
-	 * @throws Exception If the wp-config.php file is missing.
-	 * @throws Exception If the wp-config.php file is not writable.
+	 * @throws Exception If the fp-config.php file is missing.
+	 * @throws Exception If the fp-config.php file is not writable.
 	 *
-	 * @param string $wp_config_path Path to a wp-config.php file.
+	 * @param string $fp_config_path Path to a fp-config.php file.
 	 */
-	public function __construct( $wp_config_path, $read_only = false ) {
-		$basename = basename( $wp_config_path );
+	public function __construct( $fp_config_path, $read_only = false ) {
+		$basename = basename( $fp_config_path );
 
-		if ( ! file_exists( $wp_config_path ) ) {
+		if ( ! file_exists( $fp_config_path ) ) {
 			throw new Exception( "{$basename} does not exist." );
 		}
 
-		if ( ! $read_only && ! is_writable( $wp_config_path ) ) {
+		if ( ! $read_only && ! is_writable( $fp_config_path ) ) {
 			throw new Exception( "{$basename} is not writable." );
 		}
 
-		$this->wp_config_path = $wp_config_path;
+		$this->fp_config_path = $fp_config_path;
 	}
 
 	/**
-	 * Checks if a config exists in the wp-config.php file.
+	 * Checks if a config exists in the fp-config.php file.
 	 *
-	 * @throws Exception If the wp-config.php file is empty.
+	 * @throws Exception If the fp-config.php file is empty.
 	 * @throws Exception If the requested config type is invalid.
 	 *
 	 * @param string $type Config type (constant or variable).
@@ -64,26 +64,26 @@ class WPConfigTransformer {
 	 * @return bool
 	 */
 	public function exists( $type, $name ) {
-		$wp_config_src = (string) file_get_contents( $this->wp_config_path );
+		$fp_config_src = (string) file_get_contents( $this->fp_config_path );
 
-		if ( ! trim( $wp_config_src ) ) {
+		if ( ! trim( $fp_config_src ) ) {
 			throw new Exception( 'Config file is empty.' );
 		}
 		// Normalize the newline to prevent an issue coming from OSX.
-		$this->wp_config_src = str_replace( array( "\r\n", "\n\r", "\r" ), "\n", $wp_config_src );
-		$this->wp_configs    = $this->parse_wp_config( $this->wp_config_src );
+		$this->fp_config_src = str_replace( array( "\r\n", "\n\r", "\r" ), "\n", $fp_config_src );
+		$this->fp_configs    = $this->parse_fp_config( $this->fp_config_src );
 
-		if ( ! isset( $this->wp_configs[ $type ] ) ) {
+		if ( ! isset( $this->fp_configs[ $type ] ) ) {
 			throw new Exception( "Config type '{$type}' does not exist." );
 		}
 
-		return isset( $this->wp_configs[ $type ][ $name ] );
+		return isset( $this->fp_configs[ $type ][ $name ] );
 	}
 
 	/**
-	 * Get the value of a config in the wp-config.php file.
+	 * Get the value of a config in the fp-config.php file.
 	 *
-	 * @throws Exception If the wp-config.php file is empty.
+	 * @throws Exception If the fp-config.php file is empty.
 	 * @throws Exception If the requested config type is invalid.
 	 *
 	 * @param string $type Config type (constant or variable).
@@ -92,24 +92,24 @@ class WPConfigTransformer {
 	 * @return string|null
 	 */
 	public function get_value( $type, $name ) {
-		$wp_config_src = (string) file_get_contents( $this->wp_config_path );
+		$fp_config_src = (string) file_get_contents( $this->fp_config_path );
 
-		if ( ! trim( $wp_config_src ) ) {
+		if ( ! trim( $fp_config_src ) ) {
 			throw new Exception( 'Config file is empty.' );
 		}
 
-		$this->wp_config_src = $wp_config_src;
-		$this->wp_configs    = $this->parse_wp_config( $this->wp_config_src );
+		$this->fp_config_src = $fp_config_src;
+		$this->fp_configs    = $this->parse_fp_config( $this->fp_config_src );
 
-		if ( ! isset( $this->wp_configs[ $type ] ) ) {
+		if ( ! isset( $this->fp_configs[ $type ] ) ) {
 			throw new Exception( "Config type '{$type}' does not exist." );
 		}
 
-		return $this->wp_configs[ $type ][ $name ]['value'];
+		return $this->fp_configs[ $type ][ $name ]['value'];
 	}
 
 	/**
-	 * Adds a config to the wp-config.php file.
+	 * Adds a config to the fp-config.php file.
 	 *
 	 * @throws Exception If the config value provided is not a string.
 	 * @throws Exception If the config placement anchor could not be located.
@@ -145,22 +145,22 @@ class WPConfigTransformer {
 		$placement = (string) $placement;
 
 		if ( self::ANCHOR_EOF === $anchor ) {
-			$contents = $this->wp_config_src . $this->normalize( $type, $name, $this->format_value( $value, $raw ) );
+			$contents = $this->fp_config_src . $this->normalize( $type, $name, $this->format_value( $value, $raw ) );
 		} else {
-			if ( false === strpos( $this->wp_config_src, $anchor ) ) {
+			if ( false === strpos( $this->fp_config_src, $anchor ) ) {
 				throw new Exception( 'Unable to locate placement anchor.' );
 			}
 
 			$new_src  = $this->normalize( $type, $name, $this->format_value( $value, $raw ) );
 			$new_src  = ( 'after' === $placement ) ? $anchor . $separator . $new_src : $new_src . $separator . $anchor;
-			$contents = str_replace( $anchor, $new_src, $this->wp_config_src );
+			$contents = str_replace( $anchor, $new_src, $this->fp_config_src );
 		}
 
 		return $this->save( $contents );
 	}
 
 	/**
-	 * Updates an existing config in the wp-config.php file.
+	 * Updates an existing config in the fp-config.php file.
 	 *
 	 * @throws Exception If the config value provided is not a string.
 	 *
@@ -179,7 +179,7 @@ class WPConfigTransformer {
 		$defaults = array(
 			'add'       => true, // Add the config if missing.
 			'raw'       => false, // Display value in raw format without quotes.
-			'normalize' => false, // Normalize config output using WP Coding Standards.
+			'normalize' => false, // Normalize config output using FP Coding Standards.
 		);
 
 		list( $add, $raw, $normalize ) = array_values( array_merge( $defaults, $options ) );
@@ -192,8 +192,8 @@ class WPConfigTransformer {
 			return ( $add ) ? $this->add( $type, $name, $value, $options ) : false;
 		}
 
-		$old_src   = $this->wp_configs[ $type ][ $name ]['src'];
-		$old_value = $this->wp_configs[ $type ][ $name ]['value'];
+		$old_src   = $this->fp_configs[ $type ][ $name ]['src'];
+		$old_value = $this->fp_configs[ $type ][ $name ]['value'];
 
 		/**
 		 * @var string $new_value
@@ -203,7 +203,7 @@ class WPConfigTransformer {
 		if ( $normalize ) {
 			$new_src = $this->normalize( $type, $name, $new_value );
 		} else {
-			$new_parts    = $this->wp_configs[ $type ][ $name ]['parts'];
+			$new_parts    = $this->fp_configs[ $type ][ $name ]['parts'];
 			$new_parts[1] = str_replace( $old_value, $new_value, $new_parts[1] ); // Only edit the value part.
 			$new_src      = implode( '', $new_parts );
 		}
@@ -211,14 +211,14 @@ class WPConfigTransformer {
 		$contents = (string) preg_replace(
 			sprintf( '/(?<=^|;|<\?php\s|<\?\s)(\s*?)%s/m', preg_quote( trim( $old_src ), '/' ) ),
 			'$1' . str_replace( '$', '\$', trim( $new_src ) ),
-			$this->wp_config_src
+			$this->fp_config_src
 		);
 
 		return $this->save( $contents );
 	}
 
 	/**
-	 * Removes a config from the wp-config.php file.
+	 * Removes a config from the fp-config.php file.
 	 *
 	 * @param string $type Config type (constant or variable).
 	 * @param string $name Config name.
@@ -242,7 +242,7 @@ class WPConfigTransformer {
 			);
 		}
 
-		$contents = (string) preg_replace( $pattern, '', $this->wp_config_src );
+		$contents = (string) preg_replace( $pattern, '', $this->fp_config_src );
 
 		return $this->save( $contents );
 	}
@@ -289,13 +289,13 @@ class WPConfigTransformer {
 	}
 
 	/**
-	 * Parses the source of a wp-config.php file.
+	 * Parses the source of a fp-config.php file.
 	 *
 	 * @param string $src Config file source.
 	 *
 	 * @return array<string, array<string, array{src: string, value: string, parts: array<string>}>>
 	 */
-	protected function parse_wp_config( $src ) {
+	protected function parse_fp_config( $src ) {
 		$configs             = array();
 		$configs['constant'] = array();
 		$configs['variable'] = array();
@@ -305,7 +305,7 @@ class WPConfigTransformer {
 			if ( in_array( $token[0], array( T_COMMENT, T_DOC_COMMENT ), true ) ) {
 				if ( '//' === $token[1] ) {
 					// For empty line comments, actually remove empty line comments instead of all double-slashes.
-					// See: https://github.com/wp-cli/wp-config-transformer/issues/47
+					// See: https://github.com/fp-cli/fp-config-transformer/issues/47
 					$src = (string) preg_replace( '/' . preg_quote( '//', '/' ) . '$/m', '', $src );
 				} else {
 					$src = str_replace( $token[1], '', $src );
@@ -349,10 +349,10 @@ class WPConfigTransformer {
 	}
 
 	/**
-	 * Saves new contents to the wp-config.php file.
+	 * Saves new contents to the fp-config.php file.
 	 *
 	 * @throws Exception If the config file content provided is empty.
-	 * @throws Exception If there is a failure when saving the wp-config.php file.
+	 * @throws Exception If there is a failure when saving the fp-config.php file.
 	 *
 	 * @param string $contents New config contents.
 	 *
@@ -363,11 +363,11 @@ class WPConfigTransformer {
 			throw new Exception( 'Cannot save the config file with empty contents.' );
 		}
 
-		if ( $contents === $this->wp_config_src ) {
+		if ( $contents === $this->fp_config_src ) {
 			return false;
 		}
 
-		$result = file_put_contents( $this->wp_config_path, $contents, LOCK_EX );
+		$result = file_put_contents( $this->fp_config_path, $contents, LOCK_EX );
 
 		if ( false === $result ) {
 			throw new Exception( 'Failed to update the config file.' );
